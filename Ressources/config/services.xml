@@ -1,0 +1,60 @@
+<?xml version="1.0" ?>
+
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <!-- Domain public -->
+        <service id="edsitech_gandi.domain_repository" class="EdsiTech\GandiBundle\Repository\DomainRepository">
+            <argument type="service" id="edsitech_gandi.domain_factory" />
+            <argument type="service" id="edsitech_gandi.domain_api" />
+        </service>
+        <service id="edsitech_gandi.domain_availibility" class="EdsiTech\GandiBundle\API\DomainAvailability">
+            <argument>%server_url%</argument>
+            <argument>%api_key%</argument>
+        </service>
+
+        <!-- Domain internal -->
+        <service id="edsitech_gandi.domain_factory" class="EdsiTech\GandiBundle\Factory\DomainFactory" public="false">
+            <argument type="service" id="edsitech_gandi.domain_api" />
+        </service>
+        <service id="edsitech_gandi.domain_api" class="EdsiTech\GandiBundle\Service\DomainAPI" public="false">
+            <argument>%server_url%</argument>
+            <argument>%api_key%</argument>
+            <argument>%default_nameservers%</argument>
+            <argument>%default_handles%</argument>
+            <argument type="service" id="edsitech_gandi.contact_api" />
+        </service>
+        
+        <!-- Contact public -->
+        <service id="edsitech_gandi.contact_repository" class="EdsiTech\GandiBundle\Repository\ContactRepository">
+            <argument type="service" id="edsitech_gandi.contact_factory" />
+            <argument type="service" id="edsitech_gandi.contact_api" />
+        </service>
+        
+        <!-- Contact internal -->
+        <service id="edsitech_gandi.contact_factory" class="EdsiTech\GandiBundle\Factory\ContactFactory" public="false">
+            <argument type="service" id="edsitech_gandi.contact_api" />
+        </service>
+        <service id="edsitech_gandi.contact_api" class="EdsiTech\GandiBundle\Service\ContactAPI">
+            <argument>%server_url%</argument>
+            <argument>%api_key%</argument>
+        </service>
+        
+        <!-- other -->
+        <service id="edsitech_gandi.operation_api" class="EdsiTech\GandiBundle\Service\OperationAPI">
+            <argument>%server_url%</argument>
+            <argument>%api_key%</argument>
+        </service>
+        <service id="edsitech_gandi.catalog_api" class="EdsiTech\GandiBundle\Service\CatalogAPI">
+            <argument>%server_url%</argument>
+            <argument>%api_key%</argument>
+        </service>
+        <service id="edsitech_gandi.certificate_api" class="EdsiTech\GandiBundle\Service\CertificateAPI">
+            <argument>%server_url%</argument>
+            <argument>%api_key%</argument>
+        </service>
+    </services>
+
+</container>

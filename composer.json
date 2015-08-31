@@ -1,0 +1,26 @@
+{
+    "name": "edsi-tech/gandi-bundle",
+    "type": "symfony-bundle",
+    "description": "Gandi Bundle by EDSI-Tech for the Gandi V3 API",
+    "authors": [
+        {
+            "name": "Philippe Bonvin",
+            "email": "p.bonvin@edsi-tech.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "EdsiTech\\GandiBundle\\": ""
+        }
+    },
+    "require": {
+        "php": "~5.4",
+        "symfony/symfony": "~2.5",
+        "zendframework/zend-xmlrpc": "2.4.*",
+        "ocramius/proxy-manager": "1.0.*",
+        "zendframework/zendxml": "~1.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "*"
+    }
+}
