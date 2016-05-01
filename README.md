@@ -35,7 +35,7 @@ In your app/config/config.yml :
 
 Note that the test server is `https://rpc.ote.gandi.net/xmlrpc/` and the production server is `https://rpc.gandi.net/xmlrpc/`
 
-## Usage
+## Usage examples
 
 ### Get all domains names and expiration date
 
@@ -95,7 +95,7 @@ $fqdn = "example.com";
 $myHandle = "XYZ-GANDI";
 
 $domain = new Domain($fqdn);
-$domain->setDuration(1) //in year
+$domain->setDuration(1) //years
        ->setAutorenew(true)
        ->setOwnerContact(new Contact($myHandle))
        ;
@@ -113,7 +113,7 @@ try {
      }
 
                  
- } catch (\Exception $e) {
+ } catch (APIException $e) {
      
      $message = $e->getMessage();
      
@@ -124,8 +124,6 @@ try {
 ```
 
 ### Transfer a domain name
-
-
 ```php
 use EdsiTech\GandiBundle\Model\Operation;
 
@@ -139,6 +137,23 @@ if($result instanceof Operation) {
     echo "Operation in progress";
 }
                 
+```
+### Enable auto-renew
+```php
+
+$fqdn = "example.com";
+
+$domainRepository = $this->get('edsitech_gandi.domain_repository');
+     
+$domain = $domainRepository->find($fqdn);
+
+try {
+    $domainRepository->enableAutorenew($domain);
+} catch (\Exception $e) {
+
+    echo "That's an error";
+
+}
 ```
 
 
