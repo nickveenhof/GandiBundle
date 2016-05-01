@@ -185,7 +185,7 @@ try {
 ```php
 use EdsiTech\GandiBundle\Form\ContactType;
 use EdsiTech\GandiBundle\Model\Contact;
-
+use EdsiTech\GandiBundle\Exception\APIException;
 
 $contactRepository = $this->get('edsitech_gandi.contact_repository');
 
@@ -205,7 +205,7 @@ if ($form->isValid()) {
         $result = $contactRepository->persist($contact);
         
                     
-    } catch (\Exception $e) {
+    } catch (APIException $e) {
         
 
 		//...
