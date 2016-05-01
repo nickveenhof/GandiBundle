@@ -3,7 +3,7 @@
 Gandi API v3
 
 
-## Install
+## Installation
 
 1. Install the bundle with composer
 
@@ -15,7 +15,7 @@ Add in your AppKernel.php  `new EdsiTech\GandiBundle\EdsiTechGandiBundle(),`
 
 3. Add the mandatory configurations options
 
-In your app/config/config.yml
+In your app/config/config.yml :
 
 ```yaml
  edsitech_gandi:
@@ -34,6 +34,119 @@ In your app/config/config.yml
 ```
 
 Note that the test server is `https://rpc.ote.gandi.net/xmlrpc/` and the production server is `https://rpc.gandi.net/xmlrpc/`
+
+## Usage
+
+### Get all domains names and expiration date
+
+```php
+$currentHandle = "MYHANDLE-GANDI";
+
+$domainRepository = $this->get('edsitech_gandi.domain_repository');
+$domains_api = $domainRepository->findBy(['handle' => $currentHandle]);
+foreach($domains_api as $domain) {
+    $fqdn = $domain->getFqdn();
+    echo $fqdn.": ".$domain->getExpire()->format('Y-m-d')."\n";
+}
+```
+
+### Get a domain name
+```php
+use EdsiTech\GandiBundle\Model\Domain;
+
+$fqdn = "example.com";
+
+$domainRepository = $this->get('edsitech_gandi.domain_repository');
+$domain = $domainRepository->find($fqdn);
+
+if($domain instanceof Domain) {
+    print_r($domain);
+}
+
+```
+
+### Get available extensions
+
+```php
+$gandi = $this->get('edsitech_gandi.domain_availibility');
+print_r($gandi->getExtensions());
+```
+### Check domain availibility
+
+```php
+$domain = "example.com";
+
+$domainAPI = $this->get('edsitech_gandi.domain_availibility');
+$domain = idn_to_ascii($domain); //needed for special chars domains 
+        
+$result = $domainAPI->isAvailable([$domain]); //this is an array, you can pass multiple domains
+
+print_r($result); //the result is also an array, the key is the domain name and the value is the result.
+```
+
+### Register a domain name
+
+```php
+use EdsiTech\GandiBundle\Model\Domain;
+use EdsiTech\GandiBundle\Model\Contact;
+use EdsiTech\GandiBundle\Model\Operation;
+
+$fqdn = "example.com";
+$myHandle = "XYZ-GANDI";
+
+$domain = new Domain($fqdn);
+$domain->setDuration(1) //in year
+       ->setAutorenew(true)
+       ->setOwnerContact(new Contact($myHandle))
+       ;
+//others contact informations are taken from the default_handles config keys.
+
+$domainRepository = $this->get('edsitech_gandi.domain_repository');
+
+try {
+    $result = $domainRepository->register($domain);
+     
+     if($result instanceof Operation) {
+         
+         echo "Operation in progress";
+         
+     }
+
+                 
+ } catch (\Exception $e) {
+     
+     $message = $e->getMessage();
+     
+     echo "Error: ".$message;
+
+ }
+
+```
+
+### Transfer a domain name
+
+
+```php
+use EdsiTech\GandiBundle\Model\Operation;
+
+$domain = "example.com";
+$authcode = "test";
+
+$domainRepository = $this->get('edsitech_gandi.domain_repository');
+$result = $domainRepository->transfert($domain, $authcode);
+
+if($result instanceof Operation) {
+    echo "Operation in progress";
+}
+                
+```
+
+
+## Disclamer
+
+* The API requires some extras informations for specific tld that are not implemented in this bundle.
+* The DNSSEC support is in development and not fully implemented.
+* You may need to add a cache layer (like redis for instance) to the domain and extension lists as it take 10-15 seconds to get the results.
 
 ## Testing
 
