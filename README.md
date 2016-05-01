@@ -90,6 +90,7 @@ print_r($result); //the result is also an array, the key is the domain name and 
 use EdsiTech\GandiBundle\Model\Domain;
 use EdsiTech\GandiBundle\Model\Contact;
 use EdsiTech\GandiBundle\Model\Operation;
+use EdsiTech\GandiBundle\Exception\APIException;
 
 $fqdn = "example.com";
 $myHandle = "XYZ-GANDI";
@@ -140,6 +141,7 @@ if($result instanceof Operation) {
 ```
 ### Enable auto-renew
 ```php
+use EdsiTech\GandiBundle\Exception\APIException;
 
 $fqdn = "example.com";
 
@@ -149,13 +151,69 @@ $domain = $domainRepository->find($fqdn);
 
 try {
     $domainRepository->enableAutorenew($domain);
-} catch (\Exception $e) {
+} catch (APIException $e) {
 
     echo "That's an error";
 
 }
 ```
 
+### Disable lock on domain
+```php
+use EdsiTech\GandiBundle\Exception\APIException;
+
+$fqdn = "example.com";
+
+$domainRepository = $this->get('edsitech_gandi.domain_repository');
+     
+$domain = $domainRepository->find($fqdn);
+
+try {
+    $domain->setLock(false);
+    $domainRepository->update($domain);
+    
+} catch (APIException $e) {
+
+    echo "That's an error";
+
+}
+```
+
+
+
+### Create a Symfony2 form for the contact
+```php
+use EdsiTech\GandiBundle\Form\ContactType;
+use EdsiTech\GandiBundle\Model\Contact;
+
+
+$contactRepository = $this->get('edsitech_gandi.contact_repository');
+
+$contact = $contactRepository->find($currentHandle);
+
+$form = $this->createForm(new ContactType(), $contact);
+
+
+//....
+
+
+
+if ($form->isValid()) {
+
+    try {
+
+        $result = $contactRepository->persist($contact);
+        
+                    
+    } catch (\Exception $e) {
+        
+
+		//...
+
+    }
+}
+
+```
 
 ## Disclamer
 
